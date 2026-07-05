@@ -47,6 +47,15 @@
 			if (data.ok) {
 				urdu = data.urdu;
 				status = 'done';
+				if (consent) {
+					// Fire-and-forget: corpus trouble must never break the
+					// user's conversion — they gave a gift, not a dependency.
+					fetch('/api/corpus', {
+						method: 'POST',
+						headers: { 'content-type': 'application/json' },
+						body: JSON.stringify({ roman: text, urdu: data.urdu, engine: 'claude' }),
+					}).catch(() => {});
+				}
 			} else if (data.reason === 'not_roman_urdu') {
 				status = 'not_urdu';
 			} else if (data.reason === 'rate_limited') {
