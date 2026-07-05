@@ -3,10 +3,10 @@
 	// once here instead of per-page.
 	// CONCEPT: layout — SvelteKit renders this file around every route;
 	// {@render children()} is the hole the current page fills.
-	import '@fontsource/noto-nastaliq-urdu';
+	import '@fontsource/noto-nastaliq-urdu/400.css';
 	import '@fontsource/bricolage-grotesque/400.css';
 	import '@fontsource/bricolage-grotesque/700.css';
-	import '@fontsource/bungee';
+	import '@fontsource/bungee/400.css';
 	import '$lib/styles/tokens.css';
 	import favicon from '$lib/assets/favicon.svg';
 
