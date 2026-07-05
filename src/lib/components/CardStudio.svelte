@@ -47,17 +47,31 @@
 <div class="overlay" transition:fade={{ duration: 150 }} role="dialog" aria-modal="true" aria-label="Card studio">
 	<div class="studio">
 		<div class="card" bind:this={cardEl} style:background={theme.background}>
-			<p
-				class="urdu line"
-				class:on-panel={!!theme.panel}
-				lang="ur"
-				style:color={theme.textColor}
-				style:--shadow={theme.shadowColor}
-				style:--panel-bg={theme.panel?.background ?? 'transparent'}
-				style:--panel-border={theme.panel?.border ?? 'transparent'}
-			>
-				{urdu}
-			</p>
+			{#if theme.variant === 'plate'}
+				<!-- Hand-painted truck number plate: authority band on top, the
+				     user's line as the "registration", region band below. -->
+				<div class="plate">
+					<i class="bolt tl" aria-hidden="true"></i>
+					<i class="bolt tr" aria-hidden="true"></i>
+					<i class="bolt bl" aria-hidden="true"></i>
+					<i class="bolt br" aria-hidden="true"></i>
+					<p class="sign plate-band">Likhai Transport Co.</p>
+					<p class="urdu plate-line" lang="ur">{urdu}</p>
+					<p class="sign plate-band bottom">Pakistan · لکھائی</p>
+				</div>
+			{:else}
+				<p
+					class="urdu line"
+					class:on-panel={!!theme.panel}
+					lang="ur"
+					style:color={theme.textColor}
+					style:--shadow={theme.shadowColor}
+					style:--panel-bg={theme.panel?.background ?? 'transparent'}
+					style:--panel-border={theme.panel?.border ?? 'transparent'}
+				>
+					{urdu}
+				</p>
+			{/if}
 			<span class="sign watermark">likhai</span>
 		</div>
 		<Jhalar />
@@ -128,6 +142,50 @@
 		border-radius: 8px;
 		padding: 0.75rem 1.5rem;
 	}
+	/* --- number plate --- */
+	.plate {
+		position: relative;
+		width: 88%;
+		background: #f7f1df; /* sun-bleached painted metal, not clinical white */
+		border: 4px solid var(--ink);
+		box-shadow:
+			inset 0 0 0 3px #f7f1df,
+			inset 0 0 0 6px var(--rose-red),
+			0 6px 0 rgb(0 0 0 / 0.35); /* the plate stands off the tailgate */
+		border-radius: 10px;
+		padding: 0.9rem 1.5rem 1rem;
+		text-align: center;
+	}
+	.plate-band {
+		font-size: 0.6rem;
+		letter-spacing: 0.22em;
+		color: #00663f;
+		margin: 0 0 0.15rem;
+	}
+	.plate-band.bottom {
+		margin: 0.2rem 0 0;
+		color: var(--rose-red);
+	}
+	.plate-line {
+		font-size: clamp(1.3rem, 5.5vw, 2.1rem);
+		color: var(--ink);
+		margin: 0;
+		overflow-wrap: break-word;
+		/* painted-on-metal: a hair of white lift under each stroke */
+		text-shadow: 0 1px 0 #ffffff;
+	}
+	.bolt {
+		position: absolute;
+		width: 11px;
+		height: 11px;
+		border-radius: 50%;
+		background: radial-gradient(circle at 35% 30%, #cfc9b4 0%, #8a8470 55%, #4c4839 100%);
+		border: 1.5px solid var(--ink);
+	}
+	.bolt.tl { top: 8px; left: 8px; }
+	.bolt.tr { top: 8px; right: 8px; }
+	.bolt.bl { bottom: 8px; left: 8px; }
+	.bolt.br { bottom: 8px; right: 8px; }
 	.watermark {
 		position: absolute;
 		bottom: 0.7rem;

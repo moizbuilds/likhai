@@ -14,9 +14,24 @@ export type CardTheme = {
 	// Busy backgrounds get a painted text panel (cartouche) — exactly how real
 	// trucks put poetry on top of chamak patti tape-work.
 	panel?: { background: string; border: string };
+	// 'plate' renders the text as a hand-painted truck number plate — bolts,
+	// authority bands and all — instead of free-floating on the background.
+	variant?: 'plate';
 };
 
 export const CARD_THEMES: CardTheme[] = [
+	{
+		id: 'plate',
+		label: 'Number Plate · نمبر پلیٹ',
+		// painted tailgate slats: horizontal planks in truck colors with ink
+		// seams — the plate bolts onto this. (AI-painted truck rear can replace
+		// this background later without touching the plate itself.)
+		background:
+			'repeating-linear-gradient(180deg, #00663f 0 56px, #14100c 56px 60px, #a3001f 60px 116px, #14100c 116px 120px, #003c6b 120px 176px, #14100c 176px 180px)',
+		textColor: '#14100c',
+		shadowColor: '#14100c00',
+		variant: 'plate',
+	},
 	{
 		id: 'raat',
 		label: 'Raat · رات',
