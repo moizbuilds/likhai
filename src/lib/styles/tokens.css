@@ -7,6 +7,7 @@
    Truck palette rule: saturated hues are ALWAYS separated by bone-white or
    ink outlines — that's how real phool patti stays graphic instead of muddy. */
 :root {
+	color-scheme: dark; /* native scrollbars, inputs, selects match the night theme */
 	--lacquer: #101636; /* midnight cab lacquer — the app's ground */
 	--lacquer-deep: #0a0e24;
 	--emerald: #00a651;
