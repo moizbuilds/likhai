@@ -17,6 +17,7 @@
 	},
 	"devDependencies": {
 		"@fontsource/bricolage-grotesque": "^5.2.10",
+		"@fontsource/bungee": "^5.2.7",
 		"@fontsource/noto-nastaliq-urdu": "^5.2.8",
 		"@sveltejs/adapter-auto": "^7.0.1",
 		"@sveltejs/kit": "^2.63.0",

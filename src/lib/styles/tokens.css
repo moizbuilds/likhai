@@ -1,0 +1,76 @@
+/* Likhai design tokens — the truck's paint shop.
+   Every color and font in the app is defined ONCE here as a CSS custom
+   property; components refer to the names, never raw hex values.
+   CONCEPT: design tokens — a single palette file means changing one line
+   here re-paints the whole app consistently.
+
+   Truck palette rule: saturated hues are ALWAYS separated by bone-white or
+   ink outlines — that's how real phool patti stays graphic instead of muddy. */
+:root {
+	--lacquer: #101636; /* midnight cab lacquer — the app's ground */
+	--lacquer-deep: #0a0e24;
+	--emerald: #00a651;
+	--canary: #ffd100;
+	--rose-red: #e4002b;
+	--electric-blue: #00a3e0;
+	--magenta: #e5007d;
+	--bone: #fff8ea; /* outline white, warm not clinical */
+	--ink: #14100c;
+
+	--font-urdu: 'Noto Nastaliq Urdu', serif;
+	--font-latin: 'Bricolage Grotesque', sans-serif;
+	--font-sign: 'Bungee', 'Bricolage Grotesque', sans-serif; /* painted sign letters */
+}
+
+body {
+	/* Night-sky vignette: brightest where the content sits, like a truck
+	   under a single depot light. */
+	background:
+		radial-gradient(120% 90% at 50% 0%, #182050 0%, var(--lacquer) 55%, var(--lacquer-deep) 100%)
+		var(--lacquer);
+	min-height: 100vh;
+	color: var(--bone);
+	font-family: var(--font-latin);
+	margin: 0;
+}
+
+/* Urdu text: Nastaliq hangs deep below the baseline; give it room.
+   CONCEPT: RTL — Urdu reads right-to-left; direction tells the browser,
+   which also handles the complex letter-joining for free. */
+.urdu {
+	font-family: var(--font-urdu);
+	direction: rtl;
+	line-height: 2.1;
+}
+
+.latin {
+	font-family: var(--font-latin);
+}
+
+/* Painted-sign voice: eyebrows, buttons, tiny loud labels. Never body text. */
+.sign {
+	font-family: var(--font-sign);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+::selection {
+	background: var(--canary);
+	color: var(--ink);
+}
+
+/* Keyboard focus must be unmissable on a dark ground. */
+:focus-visible {
+	outline: 3px solid var(--electric-blue);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		transition-duration: 0.01ms !important;
+	}
+}
