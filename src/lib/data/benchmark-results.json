@@ -1,0 +1,75 @@
+{
+  "ranAt": "2026-07-05T10:36:10.886Z",
+  "engines": [
+    {
+      "name": "dictionary",
+      "overall": {
+        "cer": 0.33910929265628753,
+        "wordAccuracy": 0.6770502645502643,
+        "failures": 1
+      },
+      "byTier": {
+        "clean": {
+          "cer": 0.11576475221582234,
+          "wordAccuracy": 0.86,
+          "count": 20
+        },
+        "chaotic": {
+          "cer": 0.395001109428354,
+          "wordAccuracy": 0.5841269841269842,
+          "count": 15
+        },
+        "slang": {
+          "cer": 0.4221162024549089,
+          "wordAccuracy": 0.6300000000000001,
+          "count": 10
+        },
+        "code_switching": {
+          "cer": 0.5686484409310497,
+          "wordAccuracy": 0.5,
+          "count": 10
+        },
+        "poetry": {
+          "cer": 0.43971988795518213,
+          "wordAccuracy": 0.6722222222222223,
+          "count": 5
+        }
+      }
+    },
+    {
+      "name": "claude",
+      "overall": {
+        "cer": 0.012361786819991154,
+        "wordAccuracy": 0.9346428571428572,
+        "failures": 0
+      },
+      "byTier": {
+        "clean": {
+          "cer": 0,
+          "wordAccuracy": 1,
+          "count": 20
+        },
+        "chaotic": {
+          "cer": 0.025836814257866887,
+          "wordAccuracy": 0.8352380952380953,
+          "count": 15
+        },
+        "slang": {
+          "cer": 0.026288515406162467,
+          "wordAccuracy": 0.8916666666666668,
+          "count": 10
+        },
+        "code_switching": {
+          "cer": 0.009126984126984126,
+          "wordAccuracy": 0.9633333333333333,
+          "count": 10
+        },
+        "poetry": {
+          "cer": 0,
+          "wordAccuracy": 1,
+          "count": 5
+        }
+      }
+    }
+  ]
+}

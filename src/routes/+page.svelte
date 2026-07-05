@@ -139,6 +139,10 @@
 		</p>
 	{/if}
 	</div>
+
+	<footer class="latin">
+		<a href="/benchmark">How good is it? See the benchmark →</a>
+	</footer>
 </main>
 
 {#if showStudio}
@@ -279,5 +283,13 @@
 		margin-left: 0.5rem;
 		font-size: 0.75rem;
 		padding: 0.3rem 0.8rem;
+	}
+	footer {
+		text-align: center;
+		font-size: 0.9rem;
+		opacity: 0.85;
+	}
+	footer a {
+		color: var(--electric-blue);
 	}
 </style>
