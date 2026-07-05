@@ -8,6 +8,7 @@
 	import PhoolPattiFrame from '$lib/components/PhoolPattiFrame.svelte';
 	import ChamakDivider from '$lib/components/ChamakDivider.svelte';
 	import Jhalar from '$lib/components/Jhalar.svelte';
+	import CardStudio from '$lib/components/CardStudio.svelte';
 	import type { ApiConvertResponse } from '$lib/engines/types';
 	import { fade } from 'svelte/transition';
 
@@ -16,6 +17,7 @@
 	let status = $state<'idle' | 'loading' | 'done' | 'error' | 'not_urdu' | 'rate_limited'>('idle');
 	let consent = $state(false);
 	let copied = $state(false);
+	let showStudio = $state(false);
 	let timer: ReturnType<typeof setTimeout> | undefined;
 
 	// CONCEPT: debounce — wait until the user pauses typing (800ms) before
@@ -104,7 +106,7 @@
 				<p class="urdu result" lang="ur">{urdu}</p>
 				<div class="actions">
 					<button class="sign" onclick={copyUrdu}>{copied ? 'Copied!' : 'Copy'}</button>
-					<button class="sign primary urdu-btn" lang="ur">ٹرک پہ لگا دو</button>
+					<button class="sign primary urdu-btn" lang="ur" onclick={() => (showStudio = true)}>ٹرک پہ لگا دو</button>
 				</div>
 			</PhoolPattiFrame>
 			<Jhalar />
@@ -129,6 +131,10 @@
 	{/if}
 	</div>
 </main>
+
+{#if showStudio}
+	<CardStudio {urdu} onclose={() => (showStudio = false)} />
+{/if}
 
 <style>
 	main {
