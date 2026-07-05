@@ -1,10 +1,12 @@
 // Card themes: each pairs a background with text colors tuned to it.
 // One source of truth — the studio, previews, and exports all read this list.
 //
-// `background` is CSS (a gradient recipe or an image url). The current values
-// are hand-built "chamak patti" CSS patterns; when the AI-painted artwork is
-// generated and curated, each becomes url('/art/theme-<id>.png') — nothing
-// else in the app changes. That's the point of keeping themes in one file.
+// `background` is CSS (any valid `background` shorthand). The artwork is
+// AI-painted once at build time (nano-banana-pro / z-image via Higgsfield),
+// hand-curated, and shipped as static JPEGs in /static/art — no runtime image
+// generation. Each value ends in a solid color: that's the fallback the
+// browser paints instantly while the JPEG streams in, so the card never
+// flashes white.
 export type CardTheme = {
 	id: string;
 	label: string;
@@ -19,15 +21,20 @@ export type CardTheme = {
 	variant?: 'plate';
 };
 
+// One source of truth for the id → artwork mapping: the filename is derived
+// from the theme id, so renaming one without the other can't silently ship a
+// flat card. The trailing color is the instant-paint fallback while the JPEG
+// streams in.
+const art = (id: string, fallback: string) =>
+	`url('/art/theme-${id}.jpg') center / cover no-repeat ${fallback}`;
+
 export const CARD_THEMES: CardTheme[] = [
 	{
 		id: 'plate',
 		label: 'Number Plate · نمبر پلیٹ',
-		// painted tailgate slats: horizontal planks in truck colors with ink
-		// seams — the plate bolts onto this. (AI-painted truck rear can replace
-		// this background later without touching the plate itself.)
-		background:
-			'repeating-linear-gradient(180deg, #00663f 0 56px, #14100c 56px 60px, #a3001f 60px 116px, #14100c 116px 120px, #003c6b 120px 176px, #14100c 176px 180px)',
+		// AI-painted truck tailgate: enamel plank bands with rivets and phool
+		// patti motifs — the plate component bolts on top of it.
+		background: art('plate', '#003c6b'),
 		textColor: '#14100c',
 		shadowColor: '#14100c00',
 		variant: 'plate',
@@ -35,37 +42,34 @@ export const CARD_THEMES: CardTheme[] = [
 	{
 		id: 'raat',
 		label: 'Raat · رات',
-		// night drive: canary pinstripes over midnight ground (first layer
-		// paints on top, so the semi-transparent stripes come first)
-		background:
-			'repeating-linear-gradient(90deg, transparent 0 38px, rgba(255, 209, 0, 0.1) 38px 42px), radial-gradient(90% 60% at 50% 0%, #1d2a66 0%, #101636 60%, #0a0e24 100%)',
+		// night drive: AI-painted midnight panel — crescent moon and stars in
+		// the border, amber truck lights along the bottom, calm dark center
+		background: art('raat', '#0a0e24'),
 		textColor: '#ffd100',
 		shadowColor: '#000000',
 	},
 	{
 		id: 'gulab',
 		label: 'Gulab · گلاب',
-		// rose-red lacquer with magenta bloom
-		background:
-			'radial-gradient(70% 50% at 50% 15%, #e5007d33 0%, transparent 60%), radial-gradient(120% 100% at 50% 100%, #7a0016 0%, #a3001f 55%, #e4002b 100%)',
+		// AI-painted rose garland border on deep red lacquer, magenta bloom
+		background: art('gulab', '#a3001f'),
 		textColor: '#fff8ea',
 		shadowColor: '#4a000d',
 	},
 	{
 		id: 'morr',
 		label: 'Morr · مور',
-		// peacock: emerald ground, electric-blue iridescence
-		background:
-			'radial-gradient(80% 55% at 50% 10%, #00a3e044 0%, transparent 55%), linear-gradient(180deg, #003c2a 0%, #00663f 55%, #00a651 130%)',
+		// AI-painted twin peacocks pressed against the edges, marigold border,
+		// wide calm emerald center for the text
+		background: art('morr', '#00663f'),
 		textColor: '#fff8ea',
 		shadowColor: '#00281c',
 	},
 	{
 		id: 'chamak',
 		label: 'Chamak · چمک',
-		// Karachi tape-work: loud diagonal vinyl stripes
-		background:
-			'repeating-linear-gradient(45deg, #e4002b 0 26px, #ffd100 26px 52px, #00a651 52px 78px, #00a3e0 78px 104px)',
+		// AI-painted Karachi tape-work: diagonal stripes + starburst medallions
+		background: art('chamak', '#e4002b'),
 		textColor: '#14100c',
 		shadowColor: '#fff8ea00', // no shadow — the panel does the separating
 		panel: { background: '#fff8ea', border: '#14100c' },

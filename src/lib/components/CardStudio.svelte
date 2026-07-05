@@ -15,6 +15,7 @@
 	let theme = $state(CARD_THEMES[0]);
 	let cardEl: HTMLDivElement | undefined = $state();
 	let downloading = $state(false);
+	let downloadError = $state(false);
 	let closeBtn: HTMLButtonElement | undefined = $state();
 
 	// A dialog must trap attention: focus moves in on open, Escape closes.
@@ -29,13 +30,29 @@
 	async function download() {
 		if (!cardEl) return;
 		downloading = true;
+		downloadError = false;
 		try {
+			// The painting must be fully fetched AND decoded before the
+			// snapshot: html-to-image silently drops a background it can't
+			// fetch (you'd share a flat card with no artwork, no error), and
+			// Safari can rasterize before a large JPEG finishes decoding.
+			// CONCEPT: img.decode() — a promise that resolves once the image
+			// is downloaded and rasterized, and rejects if either fails. That
+			// rejection is what lets us show an error instead of a blank card.
+			const artUrl = theme.background.match(/url\('([^']+)'\)/)?.[1];
+			if (artUrl) {
+				const img = new Image();
+				img.src = artUrl;
+				await img.decode();
+			}
 			// pixelRatio 2 → crisp on retina and after WhatsApp compression
 			const dataUrl = await toPng(cardEl, { pixelRatio: 2 });
 			const a = document.createElement('a');
 			a.download = `likhai-${theme.id}.png`;
 			a.href = dataUrl;
 			a.click();
+		} catch {
+			downloadError = true;
 		} finally {
 			downloading = false;
 		}
@@ -94,6 +111,11 @@
 			</button>
 			<button class="sign" bind:this={closeBtn} onclick={onclose}>Close</button>
 		</div>
+		{#if downloadError}
+			<p class="latin export-error" role="alert">
+				Couldn't paint the card — check your connection and try again.
+			</p>
+		{/if}
 	</div>
 </div>
 
@@ -239,5 +261,11 @@
 	.actions button:disabled {
 		opacity: 0.6;
 		cursor: wait;
+	}
+	.export-error {
+		text-align: center;
+		font-size: 0.8rem;
+		color: var(--canary);
+		margin-top: 0.5rem;
 	}
 </style>
