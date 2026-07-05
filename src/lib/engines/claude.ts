@@ -50,7 +50,12 @@ export function createClaudeEngine(client: MessagesClient): ConversionEngine {
 				// find the text, never assume it's first.
 				const block = msg.content.find((b) => b.type === 'text');
 				if (!block?.text) return { ok: false, reason: 'engine_error' };
-				const parsed = JSON.parse(block.text);
+				// Models sometimes wrap JSON in a ```json fence despite "strict
+				// JSON only" — take everything between the outermost braces.
+				const start = block.text.indexOf('{');
+				const end = block.text.lastIndexOf('}');
+				if (start === -1 || end <= start) return { ok: false, reason: 'engine_error' };
+				const parsed = JSON.parse(block.text.slice(start, end + 1));
 				if (parsed.ok === true && typeof parsed.urdu === 'string') return { ok: true, urdu: parsed.urdu };
 				if (parsed.ok === false && parsed.reason === 'not_roman_urdu') return { ok: false, reason: 'not_roman_urdu' };
 				return { ok: false, reason: 'engine_error' };

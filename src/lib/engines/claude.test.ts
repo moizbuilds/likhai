@@ -39,6 +39,15 @@ describe('createClaudeEngine', () => {
 		expect(await engine.convert('asdfgh')).toEqual({ ok: false, reason: 'not_roman_urdu' });
 	});
 
+	it('tolerates a markdown-fenced JSON reply', async () => {
+		// Seen in the wild: despite "strict JSON only", the model sometimes
+		// wraps its answer in a code fence. Parsing must survive that.
+		const engine = createClaudeEngine(
+			fakeClient([textBlock('```json\n{"ok": true, "urdu": "دل کی بات"}\n```')]),
+		);
+		expect(await engine.convert('dil ki baat')).toEqual({ ok: true, urdu: 'دل کی بات' });
+	});
+
 	it('returns engine_error on malformed JSON', async () => {
 		const engine = createClaudeEngine(fakeClient([textBlock('Sure! Here is the conversion:')]));
 		expect(await engine.convert('kya haal hai')).toEqual({ ok: false, reason: 'engine_error' });
