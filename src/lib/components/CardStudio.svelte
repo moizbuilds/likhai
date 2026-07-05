@@ -18,6 +18,26 @@
 	let downloadError = $state(false);
 	let closeBtn: HTMLButtonElement | undefined = $state();
 
+	// One readiness primitive that BOTH the preview and the export trust:
+	// the export is disabled until the painting has actually loaded, so we can
+	// never snapshot a flat, artwork-less card, and the user gets told when a
+	// painting fails instead of silently seeing a plain fallback color.
+	let artState = $state<'loading' | 'ready' | 'error'>('loading');
+
+	// Preload the selected theme's painting whenever the theme changes. Reading
+	// theme.artUrl directly (not a string parsed back out of the CSS) means this
+	// can't drift from what the card actually paints.
+	$effect(() => {
+		const url = theme.artUrl;
+		artState = 'loading';
+		downloadError = false; // a fresh theme starts with a clean slate
+		const img = new Image();
+		// Ignore a stale load if the user switched themes before this resolved.
+		img.onload = () => theme.artUrl === url && (artState = 'ready');
+		img.onerror = () => theme.artUrl === url && (artState = 'error');
+		img.src = url;
+	});
+
 	// A dialog must trap attention: focus moves in on open, Escape closes.
 	$effect(() => {
 		closeBtn?.focus();
@@ -32,26 +52,23 @@
 		downloading = true;
 		downloadError = false;
 		try {
-			// The painting must be fully fetched AND decoded before the
-			// snapshot: html-to-image silently drops a background it can't
-			// fetch (you'd share a flat card with no artwork, no error), and
-			// Safari can rasterize before a large JPEG finishes decoding.
-			// CONCEPT: img.decode() — a promise that resolves once the image
-			// is downloaded and rasterized, and rejects if either fails. That
-			// rejection is what lets us show an error instead of a blank card.
-			const artUrl = theme.background.match(/url\('([^']+)'\)/)?.[1];
-			if (artUrl) {
-				const img = new Image();
-				img.src = artUrl;
-				await img.decode();
-			}
+			// The font must be loaded or html-to-image can rasterize a fallback
+			// system font — and correct Nastaliq shaping is the whole point of
+			// this app. The artwork is already loaded (Download is disabled
+			// until artState === 'ready'), so the font is the only thing left
+			// to wait on before the snapshot is faithful to what's on screen.
+			// CONCEPT: document.fonts.ready — a promise that resolves once every
+			// web font used on the page has finished loading.
+			await document.fonts.ready;
 			// pixelRatio 2 → crisp on retina and after WhatsApp compression
 			const dataUrl = await toPng(cardEl, { pixelRatio: 2 });
 			const a = document.createElement('a');
 			a.download = `likhai-${theme.id}.png`;
 			a.href = dataUrl;
 			a.click();
-		} catch {
+		} catch (err) {
+			// Log the real cause; tell the user something true, don't guess it.
+			console.error('[likhai] card export failed:', err);
 			downloadError = true;
 		} finally {
 			downloading = false;
@@ -80,9 +97,10 @@
 				<p
 					class="urdu line"
 					class:on-panel={!!theme.panel}
+					class:scrim={theme.scrim}
 					lang="ur"
 					style:color={theme.textColor}
-					style:--shadow={theme.shadowColor}
+					style:--shadow={theme.shadowColor ?? 'transparent'}
 					style:--panel-bg={theme.panel?.background ?? 'transparent'}
 					style:--panel-border={theme.panel?.border ?? 'transparent'}
 				>
@@ -106,14 +124,18 @@
 		</div>
 
 		<div class="actions">
-			<button class="sign primary" onclick={download} disabled={downloading}>
-				{downloading ? 'Painting…' : 'Download PNG'}
+			<button class="sign primary" onclick={download} disabled={downloading || artState !== 'ready'}>
+				{downloading ? 'Painting…' : artState === 'loading' ? 'Loading art…' : 'Download PNG'}
 			</button>
 			<button class="sign" bind:this={closeBtn} onclick={onclose}>Close</button>
 		</div>
-		{#if downloadError}
+		{#if artState === 'error'}
 			<p class="latin export-error" role="alert">
-				Couldn't paint the card — check your connection and try again.
+				Couldn't load this artwork — check your connection, or pick another theme.
+			</p>
+		{:else if downloadError}
+			<p class="latin export-error" role="alert">
+				Couldn't create the image. Try again.
 			</p>
 		{/if}
 	</div>
@@ -163,6 +185,18 @@
 		border: 3px solid var(--panel-border);
 		border-radius: 8px;
 		padding: 0.75rem 1.5rem;
+	}
+	/* Soft dark halo behind the text so cream letters stay legible over a
+	   bright painted area (gulab's magenta bloom) without a hard-edged box. */
+	.line.scrim {
+		padding: 1.1rem 1.5rem;
+		border-radius: 18px;
+		background: radial-gradient(
+			ellipse 118% 92% at 50% 50%,
+			rgb(10 14 36 / 0.62) 0%,
+			rgb(10 14 36 / 0.34) 55%,
+			rgb(10 14 36 / 0) 80%
+		);
 	}
 	/* --- number plate --- */
 	.plate {
