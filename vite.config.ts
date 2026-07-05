@@ -1,6 +1,8 @@
 import adapter from '@sveltejs/adapter-auto';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+// CONCEPT: vitest/config re-exports Vite's defineConfig with the `test` field
+// typed — importing from plain 'vite' makes TypeScript reject the test block.
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [
