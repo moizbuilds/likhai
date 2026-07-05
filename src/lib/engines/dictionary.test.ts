@@ -29,4 +29,16 @@ describe('dictionaryEngine', () => {
 		const r = await dictionaryEngine.convert('   ');
 		expect(r).toEqual({ ok: false, reason: 'not_roman_urdu' });
 	});
+
+	it('keeps punctuation attached to converted words', async () => {
+		const r = await dictionaryEngine.convert('kya haal hai?');
+		expect(r).toEqual({ ok: true, urdu: 'کیا حال ہے?' });
+	});
+
+	it('does not treat Object.prototype properties as dictionary words', async () => {
+		// 'constructor' exists on every JS object via the prototype chain;
+		// without a hasOwn guard the engine would output a function as Urdu.
+		const r = await dictionaryEngine.convert('constructor toString');
+		expect(r).toEqual({ ok: false, reason: 'not_roman_urdu' });
+	});
 });

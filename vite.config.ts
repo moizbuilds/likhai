@@ -1,3 +1,7 @@
+// Build + test configuration. Vite is the tool that runs the dev server,
+// bundles the app for production, and (via Vitest) runs our unit tests.
+// SvelteKit plugs into it here; the adapter decides how the built app is
+// packaged for its host (adapter-auto detects Vercel by itself).
 import adapter from '@sveltejs/adapter-auto';
 import { sveltekit } from '@sveltejs/kit/vite';
 // CONCEPT: vitest/config re-exports Vite's defineConfig with the `test` field
