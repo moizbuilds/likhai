@@ -40,4 +40,17 @@ describe('wordAccuracy', () => {
 	it('ignores extra whitespace between words', () => {
 		expect(wordAccuracy('کیا حال ہے', 'کیا  حال   ہے')).toBe(1);
 	});
+
+	// Orthographic normalization (Moiz's ruling, 2026-07-05): punctuation and
+	// diacritics are garnish, not signal — the eval measures the words.
+	it('does not penalize added punctuation', () => {
+		expect(wordAccuracy('کب تک آؤ گے', 'کب تک آؤ گے؟')).toBe(1);
+		expect(wordAccuracy('میں ٹھیک ہوں تم سناؤ', 'میں ٹھیک ہوں، تم سناؤ')).toBe(1);
+	});
+	it('does not penalize diacritics', () => {
+		expect(wordAccuracy('تو نے', 'تُو نے')).toBe(1);
+	});
+	it('treats پتہ and پتا as the same word', () => {
+		expect(wordAccuracy('مجھے نہیں پتہ', 'مجھے نہیں پتا')).toBe(1);
+	});
 });

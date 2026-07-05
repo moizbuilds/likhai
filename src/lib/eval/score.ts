@@ -19,16 +19,34 @@ export function editDistance<T>(a: readonly T[], b: readonly T[]): number {
 	return d[rows - 1][cols - 1];
 }
 
+// Orthographic normalization before scoring — standard transliteration-eval
+// practice: strip what native writers treat as optional garnish (punctuation,
+// diacritics), collapse whitespace, and apply accepted spelling equivalences,
+// so the numbers measure the words rather than styling choices.
+const ARABIC_DIACRITICS = /[ً-ٰٟ]/g;
+const PUNCTUATION = /[۔؟،٬!?.,;:'"“”‘’…()[\]{}«»\-—]/g;
+
+export function normalizeForScoring(s: string): string {
+	return s
+		.replace(ARABIC_DIACRITICS, '')
+		.replace(PUNCTUATION, ' ')
+		.replace(/پتہ/g, 'پتا') // both spellings of "pata" are correct (Moiz's ruling)
+		.replace(/\s+/g, ' ')
+		.trim();
+}
+
 // [...str] splits into real characters (code points), not UTF-16 halves —
 // it matters for Urdu, where naive .split('') can shear characters apart.
 export function characterErrorRate(reference: string, hypothesis: string): number {
-	if (reference.length === 0) return hypothesis.length === 0 ? 0 : 1;
-	return editDistance([...reference], [...hypothesis]) / [...reference].length;
+	const ref = normalizeForScoring(reference);
+	const hyp = normalizeForScoring(hypothesis);
+	if (ref.length === 0) return hyp.length === 0 ? 0 : 1;
+	return editDistance([...ref], [...hyp]) / [...ref].length;
 }
 
 export function wordAccuracy(reference: string, hypothesis: string): number {
-	const ref = reference.split(/\s+/).filter(Boolean);
-	const hyp = hypothesis.split(/\s+/).filter(Boolean);
+	const ref = normalizeForScoring(reference).split(' ').filter(Boolean);
+	const hyp = normalizeForScoring(hypothesis).split(' ').filter(Boolean);
 	if (ref.length === 0) return hyp.length === 0 ? 1 : 0;
 	return Math.max(0, 1 - editDistance(ref, hyp) / ref.length);
 }

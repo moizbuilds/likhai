@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-05T10:36:10.886Z",
+  "ranAt": "2026-07-05T10:44:43.808Z",
   "engines": [
     {
       "name": "dictionary",
@@ -39,8 +39,8 @@
     {
       "name": "claude",
       "overall": {
-        "cer": 0.012361786819991154,
-        "wordAccuracy": 0.9346428571428572,
+        "cer": 0.004722884328147486,
+        "wordAccuracy": 0.958015873015873,
         "failures": 0
       },
       "byTier": {
@@ -50,18 +50,18 @@
           "count": 20
         },
         "chaotic": {
-          "cer": 0.025836814257866887,
-          "wordAccuracy": 0.8352380952380953,
+          "cer": 0.013297131718184347,
+          "wordAccuracy": 0.8809523809523809,
           "count": 15
         },
         "slang": {
-          "cer": 0.026288515406162467,
-          "wordAccuracy": 0.8916666666666668,
+          "cer": 0,
+          "wordAccuracy": 1,
           "count": 10
         },
         "code_switching": {
-          "cer": 0.009126984126984126,
-          "wordAccuracy": 0.9633333333333333,
+          "cer": 0.008391608391608392,
+          "wordAccuracy": 0.9266666666666665,
           "count": 10
         },
         "poetry": {
